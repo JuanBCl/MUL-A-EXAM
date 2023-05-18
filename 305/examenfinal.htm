@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Grupo de cubos y cono</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from 'https://sebastiann16.github.io/CompG/three.module.js';
+    import { OrbitControls } from 'https://sebastiann16.github.io/CompG/OrbitControls.js';
+  
+    var WIDTH = window.innerWidth;
+    var HEIGHT = window.innerHeight;
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(WIDTH, HEIGHT);
+    renderer.setClearColor(0xDDDDDD, 1);
+    document.body.appendChild(renderer.domElement);
+
+    var scene = new THREE.Scene();
+
+    var size = 500;
+        var divisions = 100;
+        var origin = new THREE.Vector3( 0, 0, 0 );
+        var x = new THREE.Vector3( 1, 0, 0 );
+        var y = new THREE.Vector3( 0, 1, 0 );
+        var z = new THREE.Vector3( 0, 0, 1 );
+        var color2 = new THREE.Color( 0x333333 );  /// 0x333333
+        var colorR = new THREE.Color( 0xAA0000 );
+        var colorG = new THREE.Color( 0x00AA00 );
+        var colorB = new THREE.Color( 0x0000AA );
+
+        //Crear la Grilla
+        var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2);
+        gridHelperXZ.position.y = -1;
+        scene.add(gridHelperXZ);
+
+    var camera = new THREE.PerspectiveCamera(80, WIDTH / HEIGHT);
+    camera.position.z = 20; //z
+    camera.position.y = 3; //y
+    camera.position.x = 1;
+    scene.add(camera);
+    const light = new THREE.AmbientLight(0x404040, 60);
+    scene.add(light);
+
+
+    const color = [0x00bfff, 0x34f464, 0xffbfff, 0x34f475, 0x00bf00 ];
+
+    function piramide(base, altura, ancho, col) {
+      const geometry = new THREE.CylinderGeometry(base, altura, ancho);
+      const material = new THREE.MeshMatcapMaterial({ color: col });
+      return new THREE.Mesh(geometry, material);
+    }
+
+    var ArCub = [];
+    var n = color.length;
+
+    for (var i = 0; i < n; i++) {
+      var alto = 2;
+      ArCub[i] = piramide(1, alto, 2, color[i]);
+      ArCub[0].position.x = i;
+      ArCub[0].position.y = alto+1;
+      ArCub[i].position.x = i*4;
+      ArCub[i].position.y = alto+1;
+      ArCub[i].position.y = alto-1;
+      
+    }
+
+    const group = new THREE.Group();
+    for (i = 0; i < n; i++) {
+      group.add(ArCub[i]);
+    }
+
+   
+    //group.rotation.y = Math.PI / 4;
+
+    scene.add(group);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+
+    function animate() {
+
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera)
+    }
+    animate();
+
+
+  </script>
+
+</body>
+
+</html>
